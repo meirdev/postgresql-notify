@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PostgreSQL Listener</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Latest Messages</h1>
+        <ul id="messages">
+            <li v-for="message in messages" :key="message">{{ message }}</li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        const { ref } = Vue;
+
+        const app = Vue.createApp({
+            setup() {
+                const messages = ref([]);
+
+                const websocket = new WebSocket("ws://localhost:8000/ws");
+
+                websocket.onopen = function (event) {
+                    console.log("connection established");
+                };
+
+                websocket.onmessage = function (event) {
+                    messages.value.push(event.data);
+                };
+
+                return {
+                    messages
+                }
+            }
+        });
+
+        app.mount("#app");
+    </script>
+</body>
+</html>
